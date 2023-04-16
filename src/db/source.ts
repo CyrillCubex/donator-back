@@ -13,7 +13,7 @@ export const ormconfig: MysqlConnectionOptions = {
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   synchronize: false,
-  logging: false,
+  logging: true,
   entities: [resolve(__dirname, '../**/*.entity{.ts,.js}')],
   migrations: [resolve(__dirname, 'migrations/*.ts')],
   subscribers: [],
