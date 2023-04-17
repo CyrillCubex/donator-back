@@ -6,5 +6,5 @@ export declare class DonationController {
     constructor(donationService: DonationService);
     create(body: DonationCreateInputDTO): Promise<import("../entities/donation.entity").DonationEntity>;
     value(id: string): Promise<any>;
-    fraud(body: DonationMarkFraudInputDTO): Promise<any[]>;
+    fraud(body: DonationMarkFraudInputDTO): Promise<any>;
 }

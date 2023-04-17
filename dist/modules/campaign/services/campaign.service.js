@@ -23,26 +23,23 @@ let CampaignService = class CampaignService {
         this.repository = repository;
     }
     async allActive() {
-        return await this.repository.find({
-            where: { status: campaign_status_enum_1.ECampaignStatus.ACTIVE },
-        });
+        return await this.repository.query('SELECT id, name, `desc`, goal, status FROM campaign WHERE (status = 1)');
     }
     async all() {
-        return await this.repository.find();
+        return await this.repository.query('SELECT id, name, `desc`, goal, status FROM campaign');
     }
     async makeFraud(ids) {
-        return await this.repository
-            .createQueryBuilder()
-            .update()
-            .set({ status: campaign_status_enum_1.ECampaignStatus.FRAUD })
-            .where({ id: (0, typeorm_2.In)(ids) })
-            .execute();
+        if (!ids.length)
+            return;
+        const idValues = ids.map((id) => `'${id}'`).join(',');
+        await this.repository.query('UPDATE `campaign` SET `status` = ? WHERE id IN (' + idValues + ')', [campaign_status_enum_1.ECampaignStatus.FRAUD]);
     }
     async makeSuccess(id) {
-        return this.repository.update({ id }, { status: campaign_status_enum_1.ECampaignStatus.SUCCESS });
+        return this.repository.query('UPDATE `campaign` SET `status` = ? WHERE id = ?', [campaign_status_enum_1.ECampaignStatus.SUCCESS, id]);
     }
     async byId(id) {
-        return this.repository.findOne({ where: { id } });
+        const result = await this.repository.query('SELECT * FROM campaign WHERE id = ? LIMIT 1', [id]);
+        return result[0];
     }
 };
 CampaignService = __decorate([

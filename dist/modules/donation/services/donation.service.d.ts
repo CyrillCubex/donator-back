@@ -9,6 +9,6 @@ export declare class DonationService {
     protected readonly campaignService: CampaignService;
     constructor(repository: Repository<DonationEntity>, fraudService: FraudService, campaignService: CampaignService);
     create(data: IDonationCreateInput): Promise<DonationEntity>;
-    makeFraud(donator: string): Promise<any[]>;
+    makeFraud(donator: string): Promise<any>;
     value(campaignId: number): Promise<any>;
 }

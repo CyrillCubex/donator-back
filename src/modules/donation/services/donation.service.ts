@@ -22,7 +22,7 @@ export class DonationService {
 
     if (isFraud) {
       await this.campaignService.makeFraud([+data.campaignId]);
-    }
+    } 
 
     const model = new DonationEntity();
     model.name = data.name;
@@ -42,11 +42,7 @@ export class DonationService {
 
   async makeFraud(donator: string) {
     await this.fraudService.makeFraud(donator);
-    const donations = await this.repository
-      .createQueryBuilder()
-      .select('DISTINCT campaignId')
-      .where({ name: donator })
-      .getRawMany();
+    const donations = await this.repository.query('SELECT DISTINCT campaignId FROM dontaion WHERE name = ?', [donator]);
 
     const ids = donations.map((dontaion) => dontaion.campaignId);
     await this.campaignService.makeFraud(ids);
@@ -55,12 +51,10 @@ export class DonationService {
   }
 
   async value(campaignId: number) {
-    const { sum } = await this.repository
-      .createQueryBuilder()
-      .select('SUM(amount)', 'sum')
-      .where({ campaign: { id: campaignId } as CampaignEntity })
-      .getRawOne();
-
-    return sum;
+      const result = await this.repository.query(
+        'SELECT SUM(`dontaion`.`amount`) AS `sum` FROM `dontaion` WHERE `dontaion`.`campaignId` = ?',
+        [campaignId],
+      );
+      return result[0]?.sum || 0;
   }
 }

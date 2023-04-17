@@ -45,22 +45,15 @@ let DonationService = class DonationService {
     }
     async makeFraud(donator) {
         await this.fraudService.makeFraud(donator);
-        const donations = await this.repository
-            .createQueryBuilder()
-            .select('DISTINCT campaignId')
-            .where({ name: donator })
-            .getRawMany();
+        const donations = await this.repository.query('SELECT DISTINCT campaignId FROM dontaion WHERE name = ?', [donator]);
         const ids = donations.map((dontaion) => dontaion.campaignId);
         await this.campaignService.makeFraud(ids);
         return ids;
     }
     async value(campaignId) {
-        const { sum } = await this.repository
-            .createQueryBuilder()
-            .select('SUM(amount)', 'sum')
-            .where({ campaign: { id: campaignId } })
-            .getRawOne();
-        return sum;
+        var _a;
+        const result = await this.repository.query('SELECT SUM(`dontaion`.`amount`) AS `sum` FROM `dontaion` WHERE `dontaion`.`campaignId` = ?', [campaignId]);
+        return ((_a = result[0]) === null || _a === void 0 ? void 0 : _a.sum) || 0;
     }
 };
 DonationService = __decorate([
